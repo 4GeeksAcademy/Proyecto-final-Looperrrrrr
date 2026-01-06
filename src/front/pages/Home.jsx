@@ -1,52 +1,82 @@
-import React, { useEffect } from "react"
-import rigoImageUrl from "../assets/img/rigo-baby.jpg";
+import React, { useEffect } from "react";
 import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
+import { Link } from "react-router-dom";
 
 export const Home = () => {
+  const { store, dispatch } = useGlobalReducer();
 
-	const { store, dispatch } = useGlobalReducer()
+  
+  const loadProducts = async () => {
+    try {
+        
+        const backendUrl = import.meta.env.VITE_BACKEND_URL;
+        
+        if (!backendUrl) throw new Error("VITE_BACKEND_URL no está definida");
 
-	const loadMessage = async () => {
-		try {
-			const backendUrl = import.meta.env.VITE_BACKEND_URL
+        
+        const response = await fetch(backendUrl + "/api/products");
+        const data = await response.json();
 
-			if (!backendUrl) throw new Error("VITE_BACKEND_URL is not defined in .env file")
+        
+        if (response.ok) {
+            dispatch({ type: "set_products", payload: data });
+        }
+    } catch (error) {
+        console.error("Error cargando zapatillas:", error);
+    }
+  };
 
-			const response = await fetch(backendUrl + "/api/hello")
-			const data = await response.json()
+  
+  useEffect(() => {
+    loadProducts();
+  }, []);
 
-			if (response.ok) dispatch({ type: "set_hello", payload: data.message })
+  return (
+    <div className="container mt-5">
+      <div className="text-center mb-5">
+        <h1 className="display-4 fw-bold">ReKicks</h1>
+        <p className="lead text-muted">No compres nuevo. Compra historia.</p>
+      </div>
 
-			return data
+      <div className="row">
+        
+        {store.products.map((product) => (
+          <div key={product.id} className="col-md-4 mb-4">
+            <div className="card h-100 shadow-sm border-0">
+              
+              <img 
+                src={product.image_url} 
+                className="card-img-top" 
+                alt={product.name}
+                style={{ height: "250px", objectFit: "cover" }} 
+              />
+              
+              <div className="card-body">
+                <div className="d-flex justify-content-between align-items-center mb-2">
+                    <span className="badge bg-secondary">{product.condition}</span>
+                    <span className="text-primary fw-bold fs-5">{product.price} €</span>
+                </div>
+                <h5 className="card-title">{product.name}</h5>
+                <p className="card-text text-truncate">{product.description}</p>
+                
+                <div className="d-grid gap-2">
+                    <Link to={`/product/${product.id}`} className="btn btn-outline-dark">
+                        Ver Detalles
+                    </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
 
-		} catch (error) {
-			if (error.message) throw new Error(
-				`Could not fetch the message from the backend.
-				Please check if the backend is running and the backend port is public.`
-			);
-		}
+      
+      {store.products.length === 0 && (
+        <div className="text-center text-muted mt-5">
+            <p>Cargando catálogo o no hay stock disponible...</p>
+        </div>
+      )}
+    </div>
+  );
+};
 
-	}
-
-	useEffect(() => {
-		loadMessage()
-	}, [])
-
-	return (
-		<div className="text-center mt-5">
-			<h1 className="display-4">Hello Rigo!!</h1>
-			<p className="lead">
-				<img src={rigoImageUrl} className="img-fluid rounded-circle mb-3" alt="Rigo Baby" />
-			</p>
-			<div className="alert alert-info">
-				{store.message ? (
-					<span>{store.message}</span>
-				) : (
-					<span className="text-danger">
-						Loading message from the backend (make sure your python 🐍 backend is running)...
-					</span>
-				)}
-			</div>
-		</div>
-	);
-}; 

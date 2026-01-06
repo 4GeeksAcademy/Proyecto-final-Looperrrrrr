@@ -9,7 +9,7 @@ class User(db.Model):
     password = db.Column(db.String(80), unique=False, nullable=False)
     is_active = db.Column(db.Boolean(), unique=False, nullable=False, default=True)
     
-    # los favoritos de usuario
+    # favoritos de usuario
     favorites = db.relationship('Favorite', backref='user', lazy=True)
     # para ver lo que hay en el carrito
     cart_items = db.relationship('Cart', backref='user', lazy=True)
@@ -60,7 +60,7 @@ class Favorite(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     product_id = db.Column(db.Integer, db.ForeignKey('product.id'), nullable=False)
 
-    # acceder a los datos del producto desde el favorito
+    # accede a los datos del producto desde el favorito
     product = db.relationship('Product')
 
     def serialize(self):
