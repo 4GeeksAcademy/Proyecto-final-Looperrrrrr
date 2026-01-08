@@ -28,7 +28,7 @@ export const ProductDetail = () => {
         loadSingleProduct();
     }, [id]);
 
-    if (loading) return <div className="text-center mt-5">Loading history...</div>;
+    if (loading) return <div className="text-center mt-5">Cargando historial...</div>;
     if (!product) return <div className="text-center mt-5">Producto no encontrado :(</div>;
 
     return (
