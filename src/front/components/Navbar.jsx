@@ -1,19 +1,52 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import useGlobalReducer from "../hooks/useGlobalReducer";
 
 export const Navbar = () => {
+    const { store, dispatch } = useGlobalReducer();
+    const navigate = useNavigate();
 
-	return (
-		<nav className="navbar navbar-light bg-light">
-			<div className="container">
-				<Link to="/">
-					<span className="navbar-brand mb-0 h1">React Boilerplate</span>
-				</Link>
-				<div className="ml-auto">
-					<Link to="/demo">
-						<button className="btn btn-primary">Check the Context in action</button>
-					</Link>
-				</div>
-			</div>
-		</nav>
-	);
+    const handleLogout = () => {
+        dispatch({ type: "logout" });
+        navigate("/"); // Al salir, te manda al home
+    };
+
+    return (
+        <nav className="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
+            <div className="container">
+                <Link to="/" className="navbar-brand fw-bold fs-3 text-primary">
+                    ReKicks 👟
+                </Link>
+                
+                <div className="ml-auto d-flex align-items-center">
+                    
+                    { !store.token ? (
+                        /* SI NO HAY TOKEN (No logueado) */
+                        <>
+                            <Link to="/login">
+                                <button className="btn btn-outline-primary me-2">Log in</button>
+                            </Link>
+                            <Link to="/signup">
+                                <button className="btn btn-primary">Sign up</button>
+                            </Link>
+                        </>
+                    ) : (
+                        /* SI HAY TOKEN (Logueado) */
+                        <>
+                            <button className="btn btn-outline-success me-3">
+                                🛒 Carrito 
+                                <span className="badge bg-success ms-1">{store.cart.length}</span>
+                            </button>
+                            
+                            <button onClick={handleLogout} className="btn btn-danger">
+                                Log out
+                            </button>
+                        </>
+                    )}
+                    
+                </div>
+            </div>
+        </nav>
+    );
 };
+
+
