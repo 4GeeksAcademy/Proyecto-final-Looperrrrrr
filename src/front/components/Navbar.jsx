@@ -7,7 +7,7 @@ export const Navbar = () => {
 
     const handleLogout = () => {
         dispatch({ type: "logout" });
-        navigate("/"); // Al salir, te manda al home
+        navigate("/");
     };
 
     return (
@@ -20,7 +20,7 @@ export const Navbar = () => {
                 <div className="ml-auto d-flex align-items-center">
                     
                     { !store.token ? (
-                        /* SI NO HAY TOKEN (No logueado) */
+                        
                         <>
                             <Link to="/login">
                                 <button className="btn btn-outline-primary me-2">Log in</button>
@@ -30,7 +30,7 @@ export const Navbar = () => {
                             </Link>
                         </>
                     ) : (
-                        /* SI HAY TOKEN (Logueado) */
+                        
                         <>
                             <button className="btn btn-outline-success me-3">
                                 🛒 Carrito 
