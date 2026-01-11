@@ -20,12 +20,12 @@ export const Login = () => {
         const data = await response.json();
 
         if (response.ok) {
-            // guarda el token usando la acción que creo en el store
+            
             dispatch({ 
                 type: "login", 
                 payload: { token: data.token, user_id: data.user_id } 
             });
-            navigate("/"); // manda a la tienda
+            navigate("/"); 
         } else {
             alert("Error: " + data.msg);
         }

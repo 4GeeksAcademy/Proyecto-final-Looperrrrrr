@@ -82,7 +82,56 @@ def login():
     user = User.query.filter_by(email=body['email']).first()
 
     if user and check_password_hash(user.password, body['password']):
-        access_token = create_access_token(identity=user.id)
+
+        access_token = create_access_token(identity=str(user.id))
         return jsonify({"token": access_token, "user_id": user.id}), 200
 
     return jsonify({"msg": "Email o contraseña incorrectos"}), 401
+
+
+@api.route('/cart', methods=['GET'])
+@jwt_required()
+def get_cart():
+    current_user_id = get_jwt_identity()
+    cart_items = Cart.query.filter_by(user_id=current_user_id).all()
+    results = list(map(lambda item: item.serialize(), cart_items))
+    return jsonify(results), 200
+
+
+@api.route('/cart', methods=['POST'])
+@jwt_required()
+def add_to_cart():
+    current_user_id = get_jwt_identity()
+    body = request.get_json()
+
+    if 'product_id' not in body:
+        return jsonify({"msg": "Falta el product_id"}), 400
+
+    product = Product.query.get(body['product_id'])
+    if not product:
+        return jsonify({"msg": "Producto no encontrado"}), 404
+
+    new_item = Cart(user_id=current_user_id, product_id=body['product_id'])
+
+    db.session.add(new_item)
+    db.session.commit()
+
+    return jsonify({"msg": "Añadido al carrito", "cart_item": new_item.serialize()}), 201
+
+
+@api.route('/cart/<int:item_id>', methods=['DELETE'])
+@jwt_required()
+def delete_cart_item(item_id):
+    current_user_id = get_jwt_identity()
+    item = Cart.query.get(item_id)
+
+    if not item:
+        return jsonify({"msg": "Item no encontrado"}), 404
+
+    if item.user_id != current_user_id:
+        return jsonify({"msg": "No tienes permiso"}), 403
+
+    db.session.delete(item)
+    db.session.commit()
+
+    return jsonify({"msg": "Eliminado del carrito"}), 200

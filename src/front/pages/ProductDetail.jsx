@@ -3,13 +3,13 @@ import { useParams, Link } from "react-router-dom";
 import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
 
 export const ProductDetail = () => {
-    const { id } = useParams(); // Leemos el ID de la URL (ej: 2)
+    const { id } = useParams(); 
     const { store, dispatch } = useGlobalReducer();
     const [product, setProduct] = useState(null);
     const [loading, setLoading] = useState(true);
 
+    
     useEffect(() => {
-        // Función para cargar una zapatilla
         const loadSingleProduct = async () => {
             try {
                 const response = await fetch(import.meta.env.VITE_BACKEND_URL + "/api/products/" + id);
@@ -28,7 +28,50 @@ export const ProductDetail = () => {
         loadSingleProduct();
     }, [id]);
 
-    if (loading) return <div className="text-center mt-5">Cargando historial...</div>;
+    
+    const addToCart = async () => {
+        
+        const token = localStorage.getItem("token"); 
+
+        if (!token) {
+            alert("🔒 Por favor, inicia sesión para comprar.");
+            return;
+        }
+        
+        console.log("Enviando Token:", token); 
+
+        try {
+            const response = await fetch(import.meta.env.VITE_BACKEND_URL + "/api/cart", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer " + token 
+                },
+                body: JSON.stringify({ product_id: product.id })
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                alert("✅ ¡Añadido al carrito!");
+                dispatch({ type: 'add_to_cart', payload: data.cart_item });
+            } else {
+                
+                const errorData = await response.json(); 
+                console.error("Error del servidor:", errorData);
+                alert("❌ Error: " + (errorData.msg || "Error desconocido"));
+                
+                
+                if (response.status === 401 || response.status === 422) {
+                    dispatch({ type: "logout" }); 
+                }
+            }
+        } catch (error) {
+            console.error("Error de red:", error);
+        }
+    };
+
+    
+    if (loading) return <div className="text-center mt-5">Loading history...</div>;
     if (!product) return <div className="text-center mt-5">Producto no encontrado :(</div>;
 
     return (
@@ -49,7 +92,7 @@ export const ProductDetail = () => {
                             src={product.image_url} 
                             className="img-fluid rounded-start p-4" 
                             alt={product.name} 
-                            style={{ maxHeight: "500px" }}
+                            style={{ maxHeight: "500px", objectFit: "contain" }}
                         />
                     </div>
                     
@@ -87,7 +130,7 @@ export const ProductDetail = () => {
                             <div className="d-grid gap-2">
                                 <button 
                                     className="btn btn-dark btn-lg"
-                                    onClick={() => dispatch({ type: 'add_to_cart', payload: product })}
+                                    onClick={addToCart} 
                                 >
                                     Añadir al Carrito 🛒
                                 </button>
@@ -110,3 +153,4 @@ export const ProductDetail = () => {
         </div>
     );
 };
+

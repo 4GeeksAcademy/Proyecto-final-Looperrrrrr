@@ -14,13 +14,8 @@ export default function storeReducer(store, action = {}) {
     case "set_products":
       return { ...store, products: action.payload };
 
-    case "add_to_cart":
-      return { ...store, cart: [...store.cart, action.payload] };
-
     case "login":
       localStorage.setItem("token", action.payload.token);
-      localStorage.setItem("user_id", action.payload.user_id);
-
       return {
         ...store,
         token: action.payload.token,
@@ -29,9 +24,16 @@ export default function storeReducer(store, action = {}) {
 
     case "logout":
       localStorage.removeItem("token");
-      localStorage.removeItem("user_id");
+      return { ...store, token: null, user_id: null, cart: [] };
 
-      return { ...store, token: null, user_id: null };
+    case "set_cart":
+      return { ...store, cart: action.payload };
+
+    case "add_to_cart":
+
+    case "remove_from_cart":
+      const newCart = store.cart.filter((item) => item.id !== action.payload);
+      return { ...store, cart: newCart };
 
     default:
       throw Error("Unknown action.");
