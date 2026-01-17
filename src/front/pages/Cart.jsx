@@ -7,12 +7,10 @@ export const Cart = () => {
     const navigate = useNavigate();
     const [total, setTotal] = useState(0);
 
-
+    
     useEffect(() => {
         const fetchCart = async () => {
             if (!store.token) return;
-
-
             try {
                 const response = await fetch(import.meta.env.VITE_BACKEND_URL + "/api/cart", {
                     headers: { "Authorization": "Bearer " + store.token }
@@ -32,7 +30,6 @@ export const Cart = () => {
     useEffect(() => {
         let totalPrice = 0;
         store.cart.forEach(item => {
-
             if (item.product) {
                 totalPrice += item.product.price;
             }
@@ -40,13 +37,9 @@ export const Cart = () => {
         setTotal(totalPrice);
     }, [store.cart]);
 
-
     const removeFromCart = async (cartItemId) => {
-
         const confirmDelete = window.confirm("¿Estás seguro de que quieres eliminar este producto?");
         if (!confirmDelete) return;
-
-        console.log("Intentando borrar item con ID:", cartItemId);
 
         try {
             const response = await fetch(import.meta.env.VITE_BACKEND_URL + "/api/cart/" + cartItemId, {
@@ -57,18 +50,39 @@ export const Cart = () => {
             });
 
             if (response.ok) {
-                console.log("Borrado en Backend OK");
-
                 dispatch({ type: "remove_from_cart", payload: cartItemId });
-
             } else {
-                console.error("Error borrando en backend:", response.status);
                 alert("Hubo un error al borrar");
             }
         } catch (error) {
             console.error("Error de red:", error);
         }
     };
+
+    
+    const handleCheckout = async () => {
+        try {
+            const response = await fetch(import.meta.env.VITE_BACKEND_URL + "/api/create-checkout-session", {
+                method: "POST",
+                headers: {
+                    "Authorization": "Bearer " + store.token,
+                    "Content-Type": "application/json"
+                }
+            });
+            
+            const data = await response.json();
+            
+            if (response.ok) {
+                
+                window.location.href = data.url;
+            } else {
+                alert("Error al iniciar el pago: " + data.msg);
+            }
+        } catch (error) {
+            console.error("Error conectando con Stripe:", error);
+        }
+    };
+    
 
     if (!store.token) {
         return (
@@ -82,7 +96,6 @@ export const Cart = () => {
     return (
         <div className="container mt-5">
             <h1 className="mb-4">🛒 Tu Carrito</h1>
-
             <div className="row">
                 <div className="col-md-8">
                     {store.cart.length === 0 ? (
@@ -91,7 +104,6 @@ export const Cart = () => {
                         <ul className="list-group shadow-sm">
                             {store.cart.map((item) => (
                                 <li key={item.id} className="list-group-item d-flex align-items-center p-3">
-
                                     {item.product ? (
                                         <>
                                             <img
@@ -108,7 +120,6 @@ export const Cart = () => {
                                                 <p className="fw-bold mb-2">{item.product.price} €</p>
                                                 <button
                                                     className="btn btn-sm btn-outline-danger"
-
                                                     onClick={() => removeFromCart(item.id)}
                                                 >
                                                     <i className="fas fa-trash"></i> Eliminar
@@ -123,7 +134,6 @@ export const Cart = () => {
                         </ul>
                     )}
                 </div>
-
                 <div className="col-md-4">
                     <div className="card shadow-sm border-0 bg-light">
                         <div className="card-body">
@@ -131,9 +141,16 @@ export const Cart = () => {
                             <div className="d-flex justify-content-between mb-4">
                                 <span className="h3 fw-bold">{total.toFixed(2)} €</span>
                             </div>
-                            <button className="btn btn-dark w-100 btn-lg" disabled={store.cart.length === 0}>
-                                Pagar Ahora
+                            
+                            
+                            <button 
+                                className="btn btn-dark w-100 btn-lg" 
+                                disabled={store.cart.length === 0}
+                                onClick={handleCheckout}
+                            >
+                                Pagar Ahora <i className="fa-regular fa-credit-card ms-2"></i>
                             </button>
+
                         </div>
                     </div>
                 </div>
@@ -141,5 +158,3 @@ export const Cart = () => {
         </div>
     );
 };
-
-
