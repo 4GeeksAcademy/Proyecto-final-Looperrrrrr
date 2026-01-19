@@ -18,7 +18,7 @@ stripe.api_key = os.getenv("STRIPE_API_KEY")
 
 @api.route('/hello', methods=['POST', 'GET'])
 def handle_hello():
-    response_body = { "message": "Backend conectado y funcionando 🚀" }
+    response_body = { "message": "Backend conectado y funcionando" }
     return jsonify(response_body), 200
 
 
@@ -281,83 +281,85 @@ def populate_db():
         
         db.session.query(Product).delete()
         
-       
+        
         db.session.commit()
     except Exception as e:
         db.session.rollback()
         return jsonify({"msg": "Error limpiando base de datos", "error": str(e)}), 500
 
-    
+   
     products = [
         {
-            "name": "Nike Air Jordan 1 High Chicago", 
+            "name": "Nike Air Jordan 1", 
             "description": "El clásico de 1985. Cuero premium, una joya del baloncesto.", 
             "price": 350.00, 
-            "image_url": "https://images.unsplash.com/photo-1556906781-9a412961d289?auto=format&fit=crop&w=600&q=80", 
+            "image_url": "https://images.unsplash.com/photo-1515955656352-a1fa3ffcd111?ixlib=rb-4.0.3&auto=format&fit=crop&w=700&q=80", 
             "size": 43, 
             "condition": "Como nueva", 
             "original_box": True
         },
         {
-            "name": "Adidas Yeezy Boost 350 V2", 
-            "description": "Comodidad extrema con tecnología Boost. Color Zebra.", 
-            "price": 220.50, 
-            "image_url": "https://images.unsplash.com/photo-1584735175315-9d5df23860e6?auto=format&fit=crop&w=600&q=80", 
+            "name": "Adidas Superstar", 
+            "description": "Estilo urbano clásico con puntera de goma. Icono desde los 70.", 
+            "price": 90.00, 
+            
+            "image_url": "https://images.unsplash.com/photo-1758665630748-08141996c144?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", 
             "size": 41, 
             "condition": "Buena", 
             "original_box": True
         },
         {
-            "name": "New Balance 550 Green", 
-            "description": "Estilo retro baloncesto que combina con todo.", 
+            "name": "New Balance 574", 
+            "description": "Gris clásico. La zapatilla más versátil.", 
             "price": 95.00, 
-            "image_url": "https://images.unsplash.com/photo-1663935665668-35613348882e?auto=format&fit=crop&w=600&q=80", 
+            "image_url": "https://images.unsplash.com/photo-1539185441755-769473a23570?ixlib=rb-4.0.3&auto=format&fit=crop&w=700&q=80", 
             "size": 42, 
             "condition": "Muy buena", 
             "original_box": False
         },
         {
-            "name": "Nike Dunk Low Panda", 
-            "description": "Blanco y negro. Las zapatillas más buscadas del año.", 
+            "name": "Nike Dunk Low", 
+            "description": "Estilo skater retro. Colores vibrantes.", 
             "price": 110.00, 
-            "image_url": "https://images.unsplash.com/photo-1636565138194-e0b2302008fb?auto=format&fit=crop&w=600&q=80", 
+            "image_url": "https://images.unsplash.com/photo-1592962879424-fab5e296b7d9?q=80&w=387&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", 
             "size": 40, 
             "condition": "Como nueva", 
             "original_box": True
         },
         {
-            "name": "Vans Old Skool Pro", 
-            "description": "Suela reforzada para skate. Durabilidad máxima.", 
-            "price": 35.00, 
-            "image_url": "https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?auto=format&fit=crop&w=600&q=80", 
+            "name": "Vans Old Skool", 
+            "description": "Suela waffle. Indestructibles.", 
+            "price": 65.00, 
+            "image_url": "https://images.unsplash.com/photo-1574946176568-b0baa3c91466?q=80&w=725&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", 
             "size": 44, 
             "condition": "Usada", 
             "original_box": False
         },
         {
-            "name": "Reebok Club C 85 Vintage", 
-            "description": "Cuero suave color crema. Elegancia atemporal.", 
+            "name": "Converse All Star", 
+            "description": "Negras altas. Nunca pasan de moda.", 
             "price": 60.00, 
-            "image_url": "https://images.unsplash.com/photo-1606890658317-7d14490b76fd?auto=format&fit=crop&w=600&q=80", 
+            "image_url": "https://images.unsplash.com/photo-1607522370275-f14206abe5d3?ixlib=rb-4.0.3&auto=format&fit=crop&w=700&q=80", 
             "size": 38, 
             "condition": "Muy buena", 
             "original_box": True
         },
         {
-            "name": "Puma Suede Classic", 
-            "description": "Rojas. Un icono de la cultura hip-hop.", 
+            "name": "Puma Suede", 
+            "description": "Rojas. Un icono de la cultura.", 
             "price": 50.00, 
-            "image_url": "https://images.unsplash.com/photo-1608231387042-66d1773070a5?auto=format&fit=crop&w=600&q=80", 
+            "image_url": "https://images.unsplash.com/photo-1608231387042-66d1773070a5?ixlib=rb-4.0.3&auto=format&fit=crop&w=700&q=80", 
             "size": 42, 
             "condition": "Nueva", 
             "original_box": True
         },
         {
-            "name": "Converse Chuck 70 High", 
-            "description": "Negras clásicas con lona más resistente.", 
-            "price": 45.00, 
-            "image_url": "https://images.unsplash.com/photo-1607522370275-f14206abe5d3?auto=format&fit=crop&w=600&q=80", 
-            "size": 39, 
+            "name": "Nike Air Max 90", 
+            "description": "Cámara de aire visible. Comodidad total y diseño atemporal.", 
+            "price": 140.00, 
+            
+            "image_url": "https://images.unsplash.com/photo-1603036051295-debb6ea4fcd9?q=80&w=387&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", 
+            "size": 41, 
             "condition": "Aceptable", 
             "original_box": False
         }
@@ -365,16 +367,20 @@ def populate_db():
 
     for p in products:
         new_p = Product(
-            name=p['name'],
-            description=p['description'],
-            price=p['price'],
-            image_url=p['image_url'],
-            size=p['size'],
-            condition=p['condition'],
+            name=p['name'], 
+            description=p['description'], 
+            price=p['price'], 
+            image_url=p['image_url'], 
+            size=p['size'], 
+            condition=p['condition'], 
             original_box=p['original_box'],
             is_sold=False
         )
         db.session.add(new_p)
     
-    db.session.commit()
-    return jsonify({"msg": "Base de datos renovada con fotos HD"}), 200
+    try:
+        db.session.commit()
+        return jsonify({"msg": "Base de datos actualizada"}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"msg": "Error al guardar productos", "error": str(e)}), 500
