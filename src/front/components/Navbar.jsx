@@ -50,10 +50,9 @@ export const Navbar = () => {
                         </>
                     ) : (
                         <>
-                            
                             <Link to="/favorites">
                                 <button className="btn btn-outline-danger me-2">
-                                    <i className="fa-regular fa-heart"></i>
+                                    <i className="fa-regular fa-heart"></i> Favoritos
                                 </button>
                             </Link>
 
@@ -66,10 +65,9 @@ export const Navbar = () => {
                                 </button>
                             </Link>
 
-                            
                             <Link to="/profile">
                                 <button className="btn btn-outline-primary me-2">
-                                    <i className="fa-solid fa-user"></i>
+                                    <i className="fa-solid fa-user"></i> Perfil
                                 </button>
                             </Link>
 
